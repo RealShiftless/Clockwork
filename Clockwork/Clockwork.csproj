@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="res\fonts\arial.ttf" />
+    <None Remove="res\fonts\clockwork_fonts.cwtfp" />
+    <None Remove="res\materials\default_material.cwmat" />
+    <None Remove="res\shaders\default_shader.cwshd" />
+    <None Remove="res\shaders\scripts\debug_shader.frag" />
+    <None Remove="res\shaders\scripts\debug_shader.vert" />
+    <None Remove="res\shaders\scripts\ui\text_shader.frag" />
+    <None Remove="res\shaders\scripts\ui\text_shader.vert" />
+    <None Remove="res\textures\missing.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="res\fonts\arial.ttf" />
+    <EmbeddedResource Include="res\fonts\clockwork_fonts.cwtfp" />
+    <EmbeddedResource Include="res\materials\default_material.cwmat" />
+    <EmbeddedResource Include="res\shaders\default_shader.cwshd" />
+    <EmbeddedResource Include="res\shaders\scripts\debug_shader.frag">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\shaders\scripts\debug_shader.vert">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\shaders\scripts\ui\text_shader.frag" />
+    <EmbeddedResource Include="res\shaders\scripts\ui\text_shader.vert" />
+    <EmbeddedResource Include="res\textures\missing.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenTK" Version="4.7.7" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
+    <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UI\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="freetype6.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

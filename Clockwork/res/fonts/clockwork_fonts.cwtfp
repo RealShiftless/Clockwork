@@ -1,0 +1,12 @@
+﻿[
+	{
+		"Name": "Arial_12",
+		"Size": 12,
+		"Src": "fonts.arial.ttf"
+	},
+	{
+		"Name": "Arial_14",
+		"Size": 12,
+		"Src": "fonts.arial.ttf"
+	}
+]

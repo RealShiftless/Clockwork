@@ -1,0 +1,16 @@
+{
+  "Name": "Default Material",
+  "Shader": "shaders.default_shader.cwshd",
+  "Values": {
+    "color": {
+      "Name": "color",
+      "Value": {
+        "$type": "Clockwork.Shaders.ShaderVec4, Clockwork",
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0,
+        "W": 1.0
+      }
+    }
+  }
+}

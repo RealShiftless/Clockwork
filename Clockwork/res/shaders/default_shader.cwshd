@@ -1,0 +1,5 @@
+﻿{
+    "Type": "Resource",
+    "VertexShader": "res.shaders.scripts.debug_shader.vert",
+    "FragmentShader": "res.shaders.scripts.debug_shader.frag"
+}
