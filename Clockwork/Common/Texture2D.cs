@@ -1,21 +1,19 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using Clockwork.Common.Resources;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Common
 {
-    public class Texture2D : Resource
+    internal class Texture2D : Resource
     {
         // Values
-        internal int Handle { get; private set; }
+        private int _handle;
 
         private Image<Rgba32> _image;
 
@@ -27,6 +25,8 @@ namespace Clockwork.ResourcesDeprecated
 
 
         // Properties
+        public int TextureHandle => _handle;
+
         public int Width => _image.Width;
         public int Height => _image.Height;
 
@@ -102,14 +102,14 @@ namespace Clockwork.ResourcesDeprecated
 
 
         // Resource Func
-        public override void Populate(Stream stream)
+        protected override void Populate(Stream stream)
         {
             Populate(Image.Load<Rgba32>(stream));
         }
         private void Populate(Image<Rgba32> image)
         {
             // Create and bind the Texture
-            Handle = GL.GenTexture();
+            _handle = GL.GenTexture();
             Bind(TextureUnit.Texture0);
 
             // Load the pixels into an array and set them to the Texture
@@ -129,9 +129,9 @@ namespace Clockwork.ResourcesDeprecated
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
         }
-        public override void Dispose()
+        protected override void Dispose()
         {
-            GL.DeleteTexture(Handle);
+            GL.DeleteTexture(TextureHandle);
         }
 
 
@@ -145,7 +145,7 @@ namespace Clockwork.ResourcesDeprecated
         public void Bind(TextureUnit unit)
         {
             GL.ActiveTexture(unit);
-            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            GL.BindTexture(TextureTarget.Texture2D, TextureHandle);
         }
 
         public void SetPixel(int x, int y, Color4 color)
@@ -156,10 +156,10 @@ namespace Clockwork.ResourcesDeprecated
         {
             SetPixel(position.X, position.Y, color);
         }
-        
+
         public void Save(string path, EncoderType type = EncoderType.Png)
         {
-            switch(type)
+            switch (type)
             {
                 case EncoderType.Png:
                     _image.SaveAsPng(path);

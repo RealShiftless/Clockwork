@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.ResourceManagement
+namespace Clockwork.Common.Resources
 {
     public class ResourcePtr
     {

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.ResourceManagement
+namespace Clockwork.Common.Resources
 {
     public sealed class ResourceAssembly
     {
@@ -69,7 +69,7 @@ namespace Clockwork.ResourceManagement
             }
         }
 
-        internal Stream GetManifestResourceStream(string name)
+        public Stream GetManifestResourceStream(string name)
         {
             Stream? stream = _assembly.GetManifestResourceStream(name);
 

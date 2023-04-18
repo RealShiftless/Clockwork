@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UI\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="UI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="res\fonts\arial.ttf" />
     <None Remove="res\fonts\clockwork_fonts.cwtfp" />
     <None Remove="res\materials\default_material.cwmat" />
@@ -43,10 +49,6 @@
     <PackageReference Include="OpenTK" Version="4.7.7" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SpaceWizards.SharpFont" Version="1.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UI\" />
   </ItemGroup>
 
   <ItemGroup>
