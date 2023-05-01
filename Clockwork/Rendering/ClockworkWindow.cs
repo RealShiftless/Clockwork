@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Clockwork.Windowing;
 
 namespace Clockwork.Rendering
 {

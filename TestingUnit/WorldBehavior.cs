@@ -1,6 +1,6 @@
-﻿using Clockwork.Common.Components;
+﻿using Clockwork.Common;
+using Clockwork.Common.Components;
 using Clockwork.Common.GameObjects;
-using Clockwork.ResourcesDeprecated;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace TestingUnit
         {
             _quad = Mesh.CreateQuad();
 
-            GameObject.BindComponent(new MeshRenderer(_quad, Resources.Get<Material>("res.materials.defualt_material.cwmat")) { Texture = Resources.Get<Texture2D>("textures.plane.png")});
+            GameObject.BindComponent(new MeshRenderer(_quad, Resources.Load<Material>(Game.EntryAssembly, "res.materials.defualt_material.cwmat")) { Texture = Resources.Load<Texture2D>(Game.EntryAssembly, "textures.plane.png") });
 
             GameObject.Transform.Position = new Vector3(0, -.5f, 0);
             GameObject.Transform.Scale.X = 20;

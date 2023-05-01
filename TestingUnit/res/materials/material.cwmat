@@ -1,7 +1,7 @@
 {
   "$type": "Clockwork.Resources.Material+MaterialInfo, Clockwork",
   "Name": "Default Material",
-  "Shader": "Clockwork:shaders.default_shader.cwshd",
+  "Shader": "Clockwork.shaders.default_shader.cwshd",
   "Values": [
     {
       "$type": "Clockwork.Shaders.ShaderValue, Clockwork",

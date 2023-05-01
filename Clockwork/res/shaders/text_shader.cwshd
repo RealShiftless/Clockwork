@@ -1,5 +1,4 @@
 ﻿{
-    "Type": "Resource",
-    "VertexShader": "res.shaders.scripts.ui.text_shader.vert",
-    "FragmentShader": "res.shaders.scripts.ui.text_shader.frag"
+    "VertexShaderSrc": "Clockwork.res.shaders.scripts.ui.text_shader.vert",
+    "FragmentShaderSrc": "Clockwork.res.shaders.scripts.ui.text_shader.frag"
 }

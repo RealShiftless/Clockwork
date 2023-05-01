@@ -1,14 +1,7 @@
 ﻿using Clockwork.Common.GameObjects;
 using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clockwork.Common.Components
 {

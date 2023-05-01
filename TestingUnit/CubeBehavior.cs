@@ -1,6 +1,6 @@
-﻿using Clockwork.Common.Components;
+﻿using Clockwork.Common;
+using Clockwork.Common.Components;
 using Clockwork.Common.GameObjects;
-using Clockwork.ResourcesDeprecated;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace TestingUnit
             Transform.Scale = new OpenTK.Mathematics.Vector3(5, 1, 5);
 
             MeshRenderer = GameObject.BindComponent(new MeshRenderer(Mesh.CreateCube(), Material.Copy(Game.DefaultMaterial, "Cube Material")));
-            MeshRenderer.Texture = Resources.Get<Texture2D>("textures.plane.png");
+            MeshRenderer.Texture = Resources.Load<Texture2D>(Game.EntryAssembly, "textures.plane.png");
 
             //MeshRenderer.Texture.TextureMinFilter = OpenTK.Graphics.OpenGL4.TextureMinFilter.Nearest;
             //MeshRenderer.Texture.TextureMagFilter = OpenTK.Graphics.OpenGL4.TextureMagFilter.Nearest;

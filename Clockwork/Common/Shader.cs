@@ -37,40 +37,26 @@ namespace Clockwork.Common
 
             ShaderInfo info = JsonConvert.DeserializeObject<ShaderInfo>(str);
 
-            switch (info.Type)
-            {
-                case "Embedded":
-                    Populate(info.VertexShader, info.FragmentShader);
-                    break;
+            // Load the shader resource streams
+            Stream? vertexStream = ResourceAssembly.GetManifestResourceStream(info.VertexShaderSrc);
 
-                case "Resource":
-                    Stream? vertexStream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.Name + info.VertexShader);
+            if (vertexStream == null)
+                throw new FileLoadException("Could not load ResourceStream for vertex shader at location: " + info.VertexShaderSrc);
 
-                    if (vertexStream == null)
-                        throw new FileLoadException("Could not load ResourceStream for vertex shader at location: " + info.VertexShader);
+            StreamReader vertexReader = new StreamReader(vertexStream);
+            string vertexShader = vertexReader.ReadToEnd();
+            vertexReader.Close();
 
-                    StreamReader vertexReader = new StreamReader(vertexStream);
-                    string vertexShader = vertexReader.ReadToEnd();
-                    vertexReader.Close();
+            Stream? fragmentStream = ResourceAssembly.GetManifestResourceStream(info.FragmentShaderSrc);
 
-                    Stream? fragmentStream = ResourceAssembly.GetManifestResourceStream(ResourceAssembly.Name + info.FragmentShader);
+            if (fragmentStream == null)
+                throw new FileLoadException("Could not load ResourceStream for fragment shader at location: " + info.FragmentShaderSrc);
 
-                    if (fragmentStream == null)
-                        throw new FileLoadException("Could not load ResourceStream for fragment shader at location: " + info.FragmentShader);
+            StreamReader fragmentReader = new StreamReader(fragmentStream);
+            string fragmentShader = fragmentReader.ReadToEnd();
+            fragmentReader.Close();
 
-                    StreamReader fragmentReader = new StreamReader(fragmentStream);
-                    string fragmentShader = fragmentReader.ReadToEnd();
-                    fragmentReader.Close();
-
-                    Populate(vertexShader, fragmentShader);
-                    break;
-
-                case "Local":
-                    Populate(File.ReadAllText(info.VertexShader), File.ReadAllText(info.FragmentShader));
-                    break;
-
-                default: throw new FileLoadException("Shader could not load due to unkown content type: " + info.Type);
-            }
+            Populate(vertexShader, fragmentShader);
         }
         protected virtual void Populate(string vertexShader, string fragmentShader)
         {
@@ -145,38 +131,38 @@ namespace Clockwork.Common
 
         public void Bind()
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
         }
         public int GetAttribLocation(string attribName)
         {
-            return GL.GetAttribLocation(Handle, attribName);
+            return GL.GetAttribLocation(ProgramHandle, attribName);
         }
 
 
         // Setters
         public void SetInt(string name, int data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
             GL.Uniform1(Uniforms[name], data);
         }
         public void SetFloat(string name, float data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
             GL.Uniform1(Uniforms[name], data);
         }
         public void SetMatrix4(string name, Matrix4 data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
             GL.UniformMatrix4(Uniforms[name], true, ref data);
         }
         public void SetVector3(string name, Vector3 data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
             GL.Uniform3(Uniforms[name], data);
         }
         public void SetVector4(string name, Vector4 data)
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(ProgramHandle);
             GL.Uniform4(Uniforms[name], data);
         }
 
@@ -193,10 +179,8 @@ namespace Clockwork.Common
         // Structs
         private struct ShaderInfo
         {
-            public string Type;
-
-            public string VertexShader;
-            public string FragmentShader;
+            public string VertexShaderSrc;
+            public string FragmentShaderSrc;
         }
     }
 

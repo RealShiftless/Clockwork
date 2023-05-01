@@ -4,7 +4,6 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.ComponentModel;
 using System.Diagnostics;
-using Clockwork.ResourcesDeprecated;
 
 namespace Clockwork.Rendering
 {

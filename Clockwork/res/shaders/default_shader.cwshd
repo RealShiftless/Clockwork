@@ -1,5 +1,4 @@
 ﻿{
-    "Type": "Resource",
-    "VertexShader": "res.shaders.scripts.debug_shader.vert",
-    "FragmentShader": "res.shaders.scripts.debug_shader.frag"
+    "VertexShaderSrc": "res.shaders.scripts.debug_shader.vert",
+    "FragmentShaderSrc": "res.shaders.scripts.debug_shader.frag"
 }

@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Clockwork.Common;
 using Clockwork.Common.GameObjects;
+using Clockwork.Common.Resources;
 using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
 using OpenTK.Graphics.OpenGL4;
 
 namespace Clockwork
@@ -20,22 +21,15 @@ namespace Clockwork
 
         private Camera _camera;
 
+        private ResourceLibrary _resources;
+
 
         // Properties
         public bool IsBound => Game != null;
 
         public Camera Camera => _camera;
 
-        public ResourceManager Resources
-        {
-            get
-            {
-                if (Game == null)
-                    throw new InvalidOperationException("Could not get ContentManager, as the game state was not bound to a game!");
-
-                return Game.Resources;
-            }
-        }
+        public ResourceLibrary Resources => _resources;
 
 
         // Events
@@ -67,6 +61,8 @@ namespace Clockwork
         // Virtual Func
         public virtual void Initialize()
         {
+            _resources = new ResourceLibrary(Game.ResourceManager);
+
             _camera = new Camera(this);
             _entityManager = new GameObjectManager(this);
         }

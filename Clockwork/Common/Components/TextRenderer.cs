@@ -1,6 +1,5 @@
 ﻿using Clockwork.Common.GameObjects;
 using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.Common.Mathematics
+namespace Clockwork.Mathematics
 {
     public static class Rng
     {

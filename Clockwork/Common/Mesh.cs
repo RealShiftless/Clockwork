@@ -2,7 +2,7 @@
 using OpenTK.Graphics.OpenGL4;
 using System.Diagnostics;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Common
 {
     public class Mesh
     {

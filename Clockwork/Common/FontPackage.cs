@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SharpFont;
+using Clockwork.Common.Resources;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Common
 {
     public class FontPackage : Resource
     {
         private Dictionary<string, Font> _fonts = new Dictionary<string, Font>();
 
-        public override void Populate(Stream stream)
+        protected override void Populate(Stream stream)
         {
             StreamReader reader = new StreamReader(stream);
             string json = reader.ReadToEnd();
@@ -27,18 +28,13 @@ namespace Clockwork.ResourcesDeprecated
             Library lib = new Library();
             foreach (FontInfo fontInfo in fonts)
             {
-                Font font = Resources.Get<Font>(fontInfo.Src);
-                font.Initialize(lib, fontInfo);
 
-                _fonts.Add(fontInfo.Name, font);
             }
 
         }
 
-        public override void Dispose()
+        protected override void Dispose()
         {
         }
-
-
     }
 }

@@ -1,30 +1,21 @@
-﻿using Clockwork.Rendering;
+﻿using Clockwork.Common.Resources;
 using Clockwork.Shaders;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Common
 {
     public class Material : Resource, ISerializableResource
     {
         // Values
         private string _name;
+        private string _shaderLocation;
 
         private Shader _shader;
 
         private Dictionary<string, ShaderValue> _values = new Dictionary<string, ShaderValue>();
 
-
+        
         // Properties
         public string Name => _name;
 
@@ -106,7 +97,7 @@ namespace Clockwork.ResourcesDeprecated
 
 
         // Overrides
-        public override void Populate(Stream stream)
+        protected override void Populate(Stream stream)
         {
             StreamReader reader = new StreamReader(stream);
             string json = reader.ReadToEnd();
@@ -117,10 +108,21 @@ namespace Clockwork.ResourcesDeprecated
                 TypeNameHandling = TypeNameHandling.Auto,
             });
 
-            _shader = Resources.Get<Shader>(info.Shader);
+            _shaderLocation = info.Shader;
             _values = info.Values;
         }
-        public override void Dispose()
+        protected override void Bound(ResourceLibrary sender)
+        {
+            if(_shader == null)
+            {
+                _shader = sender.Load<Shader>(ResourceAssembly, _shaderLocation);
+            }
+            else
+            {
+
+            }
+        }
+        protected override void Dispose()
         {
         }
 

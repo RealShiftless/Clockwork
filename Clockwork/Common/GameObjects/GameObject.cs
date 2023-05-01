@@ -1,4 +1,4 @@
-﻿using Clockwork.Common.Mathematics;
+﻿using Clockwork.Mathematics;
 using Clockwork.Rendering;
 using System.Diagnostics;
 

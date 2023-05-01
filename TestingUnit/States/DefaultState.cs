@@ -1,12 +1,9 @@
 ﻿using Clockwork;
+using Clockwork.Common;
 using Clockwork.Common.GameObjects;
 using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
-using Newtonsoft.Json;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Diagnostics;
 
 namespace TestingUnit.States
 {
@@ -30,7 +27,7 @@ namespace TestingUnit.States
             Update += OnStateUpdate;
 
             // Load Resources
-            _texture = Resources.Get<Texture2D>("textures.container.png");
+            _texture = Resources.Load<Texture2D>(Game.EntryAssembly, "textures.container.png");
 
             // Instantiate GameObjects
             //InstantiateGameObject<WorldBehavior>("world");

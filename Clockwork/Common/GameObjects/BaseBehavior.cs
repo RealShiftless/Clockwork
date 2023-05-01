@@ -1,11 +1,5 @@
-﻿using Clockwork.Common.Mathematics;
-using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Clockwork.Common.Resources;
+using Clockwork.Mathematics;
 
 namespace Clockwork.Common.GameObjects
 {
@@ -29,14 +23,11 @@ namespace Clockwork.Common.GameObjects
             }
         }
 
-        public ResourceManager Resources
+        public ResourceLibrary Resources
         {
             get
             {
-                if (GameObject.Game == null)
-                    throw new InvalidOperationException("The GameState that the entity was bound to was not bound to a game when getting ResourceManager!");
-
-                return GameObject.Game.Resources;
+                return GameObject.ParentState.Resources;
             }
         }
 

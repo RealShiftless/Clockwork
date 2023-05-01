@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Windowing
 {
-    public interface ISerializableResource
+    public enum VSyncMode
     {
-        public string Serialize();
+        Disabled = 0,
+        Enabled,
+        Adaptive
     }
 }

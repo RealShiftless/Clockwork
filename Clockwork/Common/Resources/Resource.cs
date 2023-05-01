@@ -9,6 +9,7 @@ namespace Clockwork.Common.Resources
     public abstract class Resource
     {
         // Values
+        private ResourceManager _manager;
         private ResourceAssembly _assembly;
         private uint _id;
         private string _name;
@@ -17,9 +18,12 @@ namespace Clockwork.Common.Resources
 
 
         // Properties
+        public ResourceManager ResourceManager => _manager;
         public ResourceAssembly ResourceAssembly => _assembly;
         public uint ResourceId => _id;
         public string ResourceName => _name;
+
+        public bool IsManaged => ResourceManager != null;
 
         internal uint References
         {
@@ -29,27 +33,48 @@ namespace Clockwork.Common.Resources
                 _references = value;
 
                 if(value == 0)
-                {
-                    _assembly.RemoveAt(ResourceId);
-                    Dispose();
-                }
+                    Destroy();
             }
         }
 
 
         // Func
-        internal void Initialize(ResourceAssembly assembly, uint id, string name, Stream stream)
+        internal void Populate(ResourceManager manager, ResourceAssembly assembly, uint id, string name, Stream stream)
         {
+            _manager = manager;
             _assembly = assembly;
             _id = id;
             _name = name;
 
+            manager.Disposing += () => Destroy();
+
             Populate(stream);
+        }
+        internal void Destroy()
+        {
+            Dispose();
+            ResourceManager.RemoveAt(ResourceId);
+        }
+        internal ResourcePtr Bind(ResourceLibrary sender)
+        {
+            Bound(sender);
+            return new ResourcePtr(this);
         }
 
 
         // Abstracts
         protected abstract void Populate(Stream stream);
-        protected abstract void Dispose();
+
+
+        // Virtuals
+        protected virtual void Bound(ResourceLibrary sender) { }
+        protected virtual void Dispose() { }
+
+
+        // Overrides
+        public override string ToString()
+        {
+            return "{ Name: " + ResourceName + ", Id: " + ResourceId + ", Assembly: " + ResourceAssembly.Name + " }";
+        }
     }
 }

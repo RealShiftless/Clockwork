@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Clockwork.Common.Mathematics;
+using Clockwork.Mathematics;
 
 namespace Clockwork.Common.GameObjects
 {

@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Clockwork.Common
 {
-    internal class Texture2D : Resource
+    public class Texture2D : Resource
     {
         // Values
         private int _handle;

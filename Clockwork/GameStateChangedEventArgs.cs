@@ -12,13 +12,10 @@ namespace Clockwork
         public readonly GameState OldState;
         public readonly GameState NewState;
 
-        public readonly FrameEventArgs FrameEvent;
-
-        public GameStateChangedEventArgs(GameState oldState, GameState newState, FrameEventArgs e)
+        public GameStateChangedEventArgs(GameState oldState, GameState newState)
         {
             OldState = oldState;
             NewState = newState;
-            FrameEvent = e;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Clockwork.Common.Resources;
+using Newtonsoft.Json;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using SharpFont;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Clockwork.ResourcesDeprecated
+namespace Clockwork.Common
 {
     public sealed class Font : Resource
     {
@@ -37,7 +38,7 @@ namespace Clockwork.ResourcesDeprecated
 
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
-            for(uint c = 0; c < _characters.Length; c++)
+            for (uint c = 0; c < _characters.Length; c++)
             {
                 try
                 {
@@ -74,17 +75,17 @@ namespace Clockwork.ResourcesDeprecated
 
 
         // Overrides
-        public override void Populate(Stream stream)
+        protected override void Populate(Stream stream)
         {
-            using(MemoryStream memoryStream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
                 stream.CopyTo(memoryStream);
                 _bytes = memoryStream.ToArray();
             }
         }
-        public override void Dispose()
+        protected override void Dispose()
         {
-            foreach(Character character in _characters)
+            foreach (Character character in _characters)
             {
                 GL.DeleteTexture(character.TextureHandle);
             }

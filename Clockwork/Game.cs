@@ -1,6 +1,7 @@
-﻿using Clockwork.Rendering;
-using Clockwork.ResourcesDeprecated;
-using OpenTK.Windowing.Desktop;
+﻿using Clockwork.Common;
+using Clockwork.Common.Resources;
+using Clockwork.Logging;
+using Clockwork.Rendering;
 using System.Reflection;
 
 namespace Clockwork
@@ -16,11 +17,11 @@ namespace Clockwork
         /// </summary>
         public Renderer Renderer { get; private set; }
 
-        public ResourceManager Resources { get; private set; }
+        // public ResourceManager Resources { get; private set; }
 
         public GameState State { get; private set; }
 
-        internal ResourceManager EngineResources { get; private set; }
+        //internal ResourceManager EngineResources { get; private set; }
 
         private GameState? _nextState;
 
@@ -28,7 +29,22 @@ namespace Clockwork
         private bool _isStarted = false;
 
 
-        // Resources
+        // Resource Management
+        public ResourceManager ResourceManager { get; private set; }
+        public ResourceAssemblyManager ResourceAssemblies => ResourceManager.ResourceAssemblies;
+
+        private ResourceLibrary _defaultResources;
+        private List<ResourceLibrary> _resourceManagers;
+
+        internal ResourceAssembly EngineAssembly { get; private set; }
+        public ResourceAssembly EntryAssembly { get; private set; }
+
+
+        // Logging
+        public Logger Logger;
+
+
+        // Default Resources
         public Texture2D MissingTexture { get; private set; }
 
         public Material DefaultMaterial { get; private set; }
@@ -37,7 +53,9 @@ namespace Clockwork
         public FontPackage DefaultFonts { get; private set; }
 
 
+
         // Events
+        public event Action Initializing;
         public event Action Initialized;
         public event Action Starting;
 
@@ -56,6 +74,7 @@ namespace Clockwork
             if (_nextState == null)
                 throw new InvalidOperationException("No state was set before Initialize was called!");
 
+
             // Initialize the renderer if nothing was set
             if (Renderer == null)
                 Renderer = new ClockworkWindow();
@@ -66,8 +85,21 @@ namespace Clockwork
             if (assembly == null)
                 throw new Exception("Error while initializing Clockwork, could not get entry assembly!");
 
-            Resources = new ResourceManager(this, assembly, Environment.CurrentDirectory);
-            EngineResources = new ResourceManager(this, Assembly.GetExecutingAssembly(), Environment.CurrentDirectory);
+            ResourceManager = new ResourceManager(this);
+
+            // Initialize the logger
+            Logger = new Logger(this, new GeneralLogger(), null);
+            Logger.Start();
+
+            // Call Initializing after logger was created, so the logger can hook into it
+            Initializing?.Invoke();
+
+            // Create resource assemblies
+            EngineAssembly = ResourceAssemblies.Create(Assembly.GetExecutingAssembly());
+            EntryAssembly = ResourceAssemblies.Create(assembly);
+
+            // Create the engines resource library
+            _defaultResources = ResourceManager.CreateLibrary();
 
             // Load the engines resources
             LoadEngineResources();
@@ -78,6 +110,8 @@ namespace Clockwork
 
             State.Game = this;
             State.Initialize();
+
+            StateChanged?.Invoke(this, new GameStateChangedEventArgs(null, State));
 
             // Hook into the update loop to update the current state
             Renderer.Update += OnUpdate;
@@ -104,22 +138,28 @@ namespace Clockwork
             // Start renderer
             Renderer.Start();
 
-            // Invoke stopped after renderer retunrs
+            // Dispose the current state
+            State.Dispose();
+
+            // Dispose the resources
+            ResourceManager.Dispose();
+
+            // Invoke stopped after renderer returns, but before the logger is stopped
             Stopped?.Invoke();
 
-            State.Dispose();
+            Logger.Stop();
         }
         private void LoadEngineResources()
         {
-            MissingTexture = EngineResources.Get<Texture2D>("textures.missing.png");
+            MissingTexture = _defaultResources.Load<Texture2D>(EngineAssembly, "textures.missing.png");
             MissingTexture.TextureMinFilter = OpenTK.Graphics.OpenGL4.TextureMinFilter.Nearest;
             MissingTexture.TextureMagFilter = OpenTK.Graphics.OpenGL4.TextureMagFilter.Nearest;
 
-            DefaultMaterial = EngineResources.Get<Material>("materials.default_material.cwmat");
+            DefaultMaterial = _defaultResources.Load<Material>(EngineAssembly, "materials.default_material.cwmat");
 
-            DefaultFonts = EngineResources.Get<FontPackage>("fonts.clockwork_fonts.cwtfp");
+            DefaultFonts = _defaultResources.Load<FontPackage>(EngineAssembly, "fonts.clockwork_fonts.cwtfp");
 
-            DefaultShader = EngineResources.Get<Shader>("shaders.default_shader.cwshd");
+            DefaultShader = _defaultResources.Load<Shader>(EngineAssembly, "shaders.default_shader.cwshd");
         }
 
 
@@ -151,7 +191,7 @@ namespace Clockwork
                 _nextState = null;
 
                 // Invoke events
-                StateChanged?.Invoke(this, new GameStateChangedEventArgs(oldState, State, e));
+                StateChanged?.Invoke(this, new GameStateChangedEventArgs(oldState, State));
             }
         }
         internal void OnRender(object sender, FrameEventArgs e)
@@ -163,6 +203,11 @@ namespace Clockwork
         public void Stop()
         {
             Renderer.Stop();
+        }
+
+        internal void BindResourceManager(ResourceLibrary manager)
+        {
+            _resourceManagers.Add(manager);
         }
 
 

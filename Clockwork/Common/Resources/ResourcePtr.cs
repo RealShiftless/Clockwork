@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Clockwork.Common.Resources
 {
-    public class ResourcePtr
+    internal class ResourcePtr
     {
         public readonly ResourceAssembly Assembly;
+        public readonly ResourceManager Manager;
         public readonly uint Id;
 
         internal ResourcePtr(Resource resource)
@@ -22,7 +23,7 @@ namespace Clockwork.Common.Resources
 
         internal void Dispose()
         {
-            Assembly.GetAt(Id).References--;
+            Manager.GetAt(Id).References--;
         }
     }
 }

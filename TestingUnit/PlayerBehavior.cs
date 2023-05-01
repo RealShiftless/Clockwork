@@ -1,8 +1,8 @@
 ﻿using Clockwork.Rendering;
 using OpenTK.Graphics.OpenGL4;
-using Clockwork.ResourcesDeprecated;
 using Clockwork.Common.Components;
 using Clockwork.Common.GameObjects;
+using Clockwork.Common;
 
 namespace TestingUnit
 {
@@ -14,7 +14,7 @@ namespace TestingUnit
         {
             base.Initialize();
 
-            Texture2D texture = Resources.Get<Texture2D>("textures.player.png");
+            Texture2D texture = Resources.Load<Texture2D>(Game.EntryAssembly, "textures.player.png");
 
             texture.TextureMinFilter = TextureMinFilter.Nearest;
             texture.TextureMagFilter = TextureMagFilter.Nearest;
