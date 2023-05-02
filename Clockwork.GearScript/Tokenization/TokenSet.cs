@@ -57,37 +57,37 @@ namespace Clockwork.GearScript.Tokenization
             // Operators
             DefineOperator("Clockwork.GearScript.Operators.Assign", @"=");
 
-            DefineOperator("Clockwork.GearScript.Operators.Add", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Subtract", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Multiply", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Divide", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Modulo", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Exponent", @"");
+            DefineOperator("Clockwork.GearScript.Operators.Add", @"+");
+            DefineOperator("Clockwork.GearScript.Operators.Subtract", @"-");
+            DefineOperator("Clockwork.GearScript.Operators.Multiply", @"*");
+            DefineOperator("Clockwork.GearScript.Operators.Divide", @"/");
+            DefineOperator("Clockwork.GearScript.Operators.Modulo", @"%");
+            DefineOperator("Clockwork.GearScript.Operators.Exponent", @"^");
 
-            DefineOperator("Clockwork.GearScript.Operators.AddAssign", @"");
-            DefineOperator("Clockwork.GearScript.Operators.SubtractAssign", @"");
-            DefineOperator("Clockwork.GearScript.Operators.MultiplyAssign", @"");
-            DefineOperator("Clockwork.GearScript.Operators.DivideAssign", @"");
-            DefineOperator("Clockwork.GearScript.Operators.ModuloAssign", @"");
-            DefineOperator("Clockwork.GearScript.Operators.ExponentAssign", @"");
+            DefineOperator("Clockwork.GearScript.Operators.AddAssign", @"+=");
+            DefineOperator("Clockwork.GearScript.Operators.SubtractAssign", @"-=");
+            DefineOperator("Clockwork.GearScript.Operators.MultiplyAssign", @"*=");
+            DefineOperator("Clockwork.GearScript.Operators.DivideAssign", @"/=");
+            DefineOperator("Clockwork.GearScript.Operators.ModuloAssign", @"%=");
+            DefineOperator("Clockwork.GearScript.Operators.ExponentAssign", @"^=");
 
-            DefineOperator("Clockwork.GearScript.Operators.And", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Or", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Not", @"");
+            DefineOperator("Clockwork.GearScript.Operators.And", @"&&");
+            DefineOperator("Clockwork.GearScript.Operators.Or", @"||");
+            DefineOperator("Clockwork.GearScript.Operators.Not", @"!");
 
-            DefineOperator("Clockwork.GearScript.Operators.Equal", @"");
-            DefineOperator("Clockwork.GearScript.Operators.NotEqual", @"");
+            DefineOperator("Clockwork.GearScript.Operators.Equal", @"==");
+            DefineOperator("Clockwork.GearScript.Operators.NotEqual", @"!=");
 
-            DefineOperator("Clockwork.GearScript.Operators.Greater", @"");
-            DefineOperator("Clockwork.GearScript.Operators.Lesser", @"");
-            DefineOperator("Clockwork.GearScript.Operators.GreaterOrEqual", @"");
-            DefineOperator("Clockwork.GearScript.Operators.LesserOrEqual", @"");
+            DefineOperator("Clockwork.GearScript.Operators.Greater", @">");
+            DefineOperator("Clockwork.GearScript.Operators.Lesser", @"<");
+            DefineOperator("Clockwork.GearScript.Operators.GreaterOrEqual", @">=");
+            DefineOperator("Clockwork.GearScript.Operators.LesserOrEqual", @"<=");
 
             // Literals
             DefineLiteral("Clockwork.GearScript.Literals.Number", @"-?\d+(\.\d+)?");
             DefineLiteral("Clockwork.GearScript.Literals.String", @""".*?""");
             //DefineLiteral("Clockwork.GearScript.Literals.Vector", @"");
-            DefineLiteral("Clockwork.GearScript.Literals.Color", @"");
+            DefineLiteral("Clockwork.GearScript.Literals.Color", @"#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})");
 
             // Literals
             DefineToken("Clockwork.GearScript.NumberLiteral", TokenType.Literal, @"-?\d+(\.\d+)?");

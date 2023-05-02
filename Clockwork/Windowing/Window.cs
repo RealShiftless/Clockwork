@@ -16,7 +16,17 @@ using Vector2 = Clockwork.Mathematics.Vector2;
 
 namespace Clockwork.Windowing
 {
-    internal class ClockworkWindow : IDisposable
+    // Delegates
+    public delegate void WindowEventHandler(Window sender);
+
+    public delegate void WindowMovedEventHandler(Window sender, WindowPositionEventArgs e);
+    public delegate void WindowResizedEventHandler(Window sender, WindowResizedEventArgs e);
+    public delegate void WindowClosingEventHandler(Window sender, CancelEventArgs e);
+    public delegate void WindowMinimizedEventHandler(Window sender, WindowMinimizedEventArgs e);
+
+
+    // class
+    public class Window : IDisposable
     {
         // Static values
         private static ConcurrentQueue<ExceptionDispatchInfo> _callbackExceptions = new ConcurrentQueue<ExceptionDispatchInfo>();
@@ -25,7 +35,7 @@ namespace Clockwork.Windowing
         // Values
         public bool IsEventDriven;
 
-        internal unsafe Window* WindowPtr;
+        internal unsafe OpenTK.Windowing.GraphicsLibraryFramework.Window* WindowPtr;
 
         private unsafe Cursor* _glfwCursor;
         private MouseCursor _managedCursor = MouseCursor.Default;
@@ -464,41 +474,42 @@ namespace Clockwork.Windowing
         private WindowIconifyCallback _windowIconifyCallback;
         private WindowMaximizeCallback _windowMaximizeCallback;
         private WindowFocusCallback _windowFocusCallback;
-        private CharCallback _charCallback;
-        private ScrollCallback _scrollCallback;
         private WindowRefreshCallback _windowRefreshCallback;
         private WindowCloseCallback _windowCloseCallback;
         private KeyCallback _keyCallback;
-        private CursorEnterCallback _cursorEnterCallback;
+        private CharCallback _charCallback;
         private MouseButtonCallback _mouseButtonCallback;
         private CursorPosCallback _cursorPosCallback;
-        private DropCallback _dropCallback;
+        private CursorEnterCallback _cursorEnterCallback;
+        private ScrollCallback _scrollCallback;
         private JoystickCallback _joystickCallback;
+        private DropCallback _dropCallback;
 
 
         // Events
-        public event Action<WindowPositionEventArgs> Move;
-        public event Action<ResizeEventArgs> Resize;
-        public event Action Refresh;
-        public event Action<CancelEventArgs> Closing;
+        public event WindowMovedEventHandler Moved;
+        public event WindowResizedEventHandler Resized;
         public event Action<MinimizedEventArgs> Minimized;
         public event Action<MaximizedEventArgs> Maximized;
-        public event Action<JoystickEventArgs> JoystickConnected;
         public event Action<FocusedChangedEventArgs> FocusedChanged;
+        public event WindowEventHandler Refreshed;
+        public event WindowClosingEventHandler Closing;
+        public event WindowEventHandler Closed;
+        public event Action<KeyboardKeyEventArgs> KeyUp;
         public event Action<KeyboardKeyEventArgs> KeyDown;
         public event Action<TextInputEventArgs> TextInput;
-        public event Action<KeyboardKeyEventArgs> KeyUp;
-        public event Action MouseLeave;
-        public event Action MouseEnter;
         public event Action<MouseButtonEventArgs> MouseDown;
         public event Action<MouseButtonEventArgs> MouseUp;
         public event Action<MouseMoveEventArgs> MouseMove;
+        public event Action MouseLeave;
+        public event Action MouseEnter;
         public event Action<MouseWheelEventArgs> MouseWheel;
+        public event Action<JoystickEventArgs> JoystickConnected;
         public event Action<FileDropEventArgs> FileDrop;
 
 
         // Constructor
-        public unsafe ClockworkWindow(WindowSettings settings)
+        public unsafe Window(WindowSettings settings)
         {
             GLFWProvider.EnsureInitialized();
 
@@ -628,11 +639,11 @@ namespace Clockwork.Windowing
                     _windowState = WindowState.Fullscreen;
                     _cachedPosition = settings.Position ?? new Vector2(32, 32);  // Better than nothing.
                     _cachedSize = settings.Size;
-                    WindowPtr = GLFW.CreateWindow(modePtr->Width, modePtr->Height, _title, monitor, (Window*)(settings.SharedContext?.WindowPtr ?? IntPtr.Zero));
+                    WindowPtr = GLFW.CreateWindow(modePtr->Width, modePtr->Height, _title, monitor, (OpenTK.Windowing.GraphicsLibraryFramework.Window*)(settings.SharedContext?.WindowPtr ?? IntPtr.Zero));
                 }
                 else
                 {
-                    WindowPtr = GLFW.CreateWindow((int)settings.Size.X, (int)settings.Size.Y, _title, null, (Window*)(settings.SharedContext?.WindowPtr ?? IntPtr.Zero));
+                    WindowPtr = GLFW.CreateWindow((int)settings.Size.X, (int)settings.Size.Y, _title, null, (OpenTK.Windowing.GraphicsLibraryFramework.Window*)(settings.SharedContext?.WindowPtr ?? IntPtr.Zero));
                 }
             }
 
@@ -773,45 +784,42 @@ namespace Clockwork.Windowing
 
             _windowPosCallback = WindowPosCallback;
             _windowSizeCallback = WindowSizeCallback;
-            _windowCloseCallback = WindowCloseCallback;
-            _windowRefreshCallback = WindowRefreshCallback;
-            _windowFocusCallback = WindowFocusCallback;
             _windowIconifyCallback = WindowIconifyCallback;
             _windowMaximizeCallback = WindowMaximizeCallback;
-            // FIXME: Add FramebufferSizeCallback and WindowContentsScaleCallback
-
+            _windowFocusCallback = WindowFocusCallback;
+            _windowRefreshCallback = WindowRefreshCallback;
+            _windowCloseCallback = WindowCloseCallback;
+            _keyCallback = KeyCallback;
+            _charCallback = CharCallback;
             _mouseButtonCallback = MouseButtonCallback;
             _cursorPosCallback = CursorPosCallback;
             _cursorEnterCallback = CursorEnterCallback;
             _scrollCallback = ScrollCallback;
-
-            _keyCallback = KeyCallback;
-            _charCallback = CharCallback;
-            // FIXME: CharModsCallback
-
+            _joystickCallback = JoystickCallback;
             _dropCallback = DropCallback;
 
-            _joystickCallback = JoystickCallback;
+            // FIXME: Add FramebufferSizeCallback and WindowContentsScaleCallback
+            // FIXME: CharModsCallback
 
             GLFW.SetWindowPosCallback(WindowPtr, _windowPosCallback);
             GLFW.SetWindowSizeCallback(WindowPtr, _windowSizeCallback);
-            GLFW.SetWindowCloseCallback(WindowPtr, _windowCloseCallback);
-            GLFW.SetWindowRefreshCallback(WindowPtr, _windowRefreshCallback);
-            GLFW.SetWindowFocusCallback(WindowPtr, _windowFocusCallback);
             GLFW.SetWindowIconifyCallback(WindowPtr, _windowIconifyCallback);
             GLFW.SetWindowMaximizeCallback(WindowPtr, _windowMaximizeCallback);
-
+            GLFW.SetWindowFocusCallback(WindowPtr, _windowFocusCallback);
+            GLFW.SetWindowRefreshCallback(WindowPtr, _windowRefreshCallback);
+            GLFW.SetWindowCloseCallback(WindowPtr, _windowCloseCallback);
             GLFW.SetMouseButtonCallback(WindowPtr, _mouseButtonCallback);
+            GLFW.SetKeyCallback(WindowPtr, _keyCallback);
+            GLFW.SetCharCallback(WindowPtr, _charCallback);
+
             GLFW.SetCursorPosCallback(WindowPtr, _cursorPosCallback);
             GLFW.SetCursorEnterCallback(WindowPtr, _cursorEnterCallback);
             GLFW.SetScrollCallback(WindowPtr, _scrollCallback);
 
-            GLFW.SetKeyCallback(WindowPtr, _keyCallback);
-            GLFW.SetCharCallback(WindowPtr, _charCallback);
 
             GLFW.SetDropCallback(WindowPtr, _dropCallback);
 
-            //Joysticks.JoystickCallback += _joystickCallback;
+            Joysticks.JoystickCallback += _joystickCallback;
         }
 
         private unsafe void HandleResize(int width, int height)
@@ -846,11 +854,11 @@ namespace Clockwork.Windowing
 
 
         // Callback Func
-        private unsafe void WindowPosCallback(Window* window, int x, int y)
+        private unsafe void WindowPosCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, int x, int y)
         {
             try
             {
-                OnMove(new WindowPositionEventArgs(x, y));
+                OnMove(new WindowPositionEventArgs((int)Position.X, (int)Position.Y, x, y));
             }
             catch (Exception e)
             {
@@ -858,11 +866,11 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowSizeCallback(Window* window, int width, int height)
+        private unsafe void WindowSizeCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, int width, int height)
         {
             try
             {
-                OnResize(new ResizeEventArgs(width, height));
+                OnResize(new WindowResizedEventArgs((int)Size.X, (int)Size.Y, width, height));
             }
             catch (Exception e)
             {
@@ -870,7 +878,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowCloseCallback(Window* window)
+        private unsafe void WindowCloseCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window)
         {
             try
             {
@@ -887,7 +895,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowRefreshCallback(Window* window)
+        private unsafe void WindowRefreshCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window)
         {
             try
             {
@@ -899,7 +907,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowFocusCallback(Window* window, bool focused)
+        private unsafe void WindowFocusCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, bool focused)
         {
             try
             {
@@ -911,7 +919,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowIconifyCallback(Window* window, bool iconified)
+        private unsafe void WindowIconifyCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, bool iconified)
         {
             try
             {
@@ -923,7 +931,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void WindowMaximizeCallback(Window* window, bool maximized)
+        private unsafe void WindowMaximizeCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, bool maximized)
         {
             try
             {
@@ -935,7 +943,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void MouseButtonCallback(Window* window, MouseButton button, InputAction action, KeyModifiers mods)
+        private unsafe void MouseButtonCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, MouseButton button, InputAction action, KeyModifiers mods)
         {
             try
             {
@@ -958,7 +966,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void CursorPosCallback(Window* window, double posX, double posY)
+        private unsafe void CursorPosCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, double posX, double posY)
         {
             try
             {
@@ -975,7 +983,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void CursorEnterCallback(Window* window, bool entered)
+        private unsafe void CursorEnterCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, bool entered)
         {
             try
             {
@@ -994,7 +1002,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void ScrollCallback(Window* window, double offsetX, double offsetY)
+        private unsafe void ScrollCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, double offsetX, double offsetY)
         {
             try
             {
@@ -1013,7 +1021,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void KeyCallback(Window* window, Keys key, int scancode, InputAction action, KeyModifiers mods)
+        private unsafe void KeyCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, Keys key, int scancode, InputAction action, KeyModifiers mods)
         {
             try
             {
@@ -1044,7 +1052,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void CharCallback(Window* window, uint codepoint)
+        private unsafe void CharCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, uint codepoint)
         {
             try
             {
@@ -1056,7 +1064,7 @@ namespace Clockwork.Windowing
             }
         }
 
-        private unsafe void DropCallback(Window* window, int count, byte** paths)
+        private unsafe void DropCallback(OpenTK.Windowing.GraphicsLibraryFramework.Window* window, int count, byte** paths)
         {
             try
             {
@@ -1134,6 +1142,24 @@ namespace Clockwork.Windowing
             {
                 GLFW.SetWindowShouldClose(WindowPtr, true);
             }
+        }
+
+        protected virtual void OnMove(WindowPositionEventArgs e)
+        {
+            Moved?.Invoke(this, e);
+
+            _position.X = e.X;
+            _position.Y = e.Y;
+        }
+        protected virtual void OnResize(WindowResizedEventArgs e)
+        {
+            HandleResize(e.Width, e.Height);
+
+            Resized?.Invoke(this, e);
+        }
+        protected virtual void OnRefresh()
+        {
+            Refreshed?.Invoke(this);
         }
 
 
